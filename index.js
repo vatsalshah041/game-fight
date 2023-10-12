@@ -6,7 +6,7 @@ canvas.height=576;
 c.fillRect(0,0,canvas.width,canvas.height);
 const gravity=0.7;
 class Sprite{
-    constructor({position,velocity,color}){
+    constructor({position,velocity,color,offset}){
         this.position=position;
         this.velocity=velocity;
         this.width=50;
@@ -14,7 +14,11 @@ class Sprite{
         this.color=color;
         this.attacking=false;
         this.attackbox={
-            position:this.position,
+            position:{
+                x:this.position.x,
+                y:this.position.y,
+            },
+            offset,
             widht:100,
             height:50,
     }
@@ -31,6 +35,10 @@ class Sprite{
         }
     }
     update(){
+
+
+        this.attackbox.position.x=this.position.x+this.attackbox.offset.x;
+        this.attackbox.position.y=this.position.y;
         this.draw();
         
         this.position.y+=this.velocity.y;
@@ -62,6 +70,10 @@ const player=new Sprite({
         x:0,
         y:0
     },
+    offset:{
+        x:0,
+        y:0
+    },
     color:'red'
 })
 
@@ -74,6 +86,10 @@ const enemy=new Sprite({
         x:0,
         y:0
     },
+    offset:{
+        x:0,
+        y:0
+    },  
     color:'blue'    
 })
 
@@ -88,6 +104,17 @@ function animate()
     // console.log('go');
     c.fillStyle='black'
     c.fillRect(0,0,canvas.width,canvas.height)
+
+    //change the direction of player's attckbox if he is ahead of enemy
+    if(player.position.x>enemy.position.x)
+    {
+        player.attackbox.offset.x=-50;
+    }
+    else
+    {
+        player.attackbox.offset.x=0;
+    }
+
     player.update();
     enemy.update();
     console.log();
@@ -100,7 +127,24 @@ function animate()
     {   
         player.attacking=false;
         console.log('attacking')
+        
+        //display and image present in the html file when the player attacks and hits the enemy and hide the image if the player is not attacking,the id of the image is hit
+
+
+        // document.getElementById('hit').style.visibility='visible';
+        const hitImage = document.getElementById('hit');
+        hitImage.style.visibility = 'visible';
+        hitImage.style.position = 'absolute';
+        hitImage.style.top = '100px';
+        hitImage.style.left = '400px';
+        setTimeout(() => {
+            hitImage.style.visibility = 'hidden';
+        }, 2000);
     }
+    // else{
+    //     document.getElementById('hit').style.visibility='hidden';
+    //     console.log('hello');
+    // }
 
 
 }
